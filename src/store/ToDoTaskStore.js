@@ -15,5 +15,22 @@ export const useToDoTaskStore = defineStore("todo", {
     getPendingTasks(state) {
       return state.tasks.filter((task) => !task.completed);
     },
+    countTotalTasks(state) {
+      return state.tasks.length;
+    },
+  },
+  actions: {
+    addTask(task) {
+      this.tasks.push(task);
+    },
+    searchTask(search) {
+      if (search.length > 3) {
+        this.tasks = this.tasks.filter((task) =>
+          task.title.toLowerCase().includes(search.toLowerCase())
+        );
+      } else {
+        this.tasks = initialTasks;
+      }
+    },
   },
 });
