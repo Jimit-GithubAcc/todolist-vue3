@@ -3,7 +3,7 @@
 <template>
   <div class="container mx-auto">
     <h1
-      class="text-xl sm:text-3xl text-center font-bold h-36 place-content-center"
+      class="text-xl sm:text-3xl text-center font-bold h-24 place-content-center bg-[#ffd859]"
     >
       To Do List App
     </h1>
