@@ -3,14 +3,9 @@
     class="flex items-center justify-between gap-5 px-5 py-3 shadow-lg rounded-md w-full bg-white"
     :class="{ completed: task.completed }"
   >
-    <h2>{{ task.title }}</h2>
-    <input
-      type="text"
-      v-model="task.title"
-      class="border border-gray-500 px-3 py-2"
-      placeholder="Enter Any Task"
-      required
-    />
+    <h2 class="flex-1 cursor-pointer" @click="goToTaskDetail(task.id)">
+      {{ task.title }}
+    </h2>
 
     <section class="flex gap-3">
       <button title="Edit Task" @click="updateTask(task)">
@@ -29,14 +24,21 @@
 
 <script setup>
 import { PencilSquareIcon } from "@heroicons/vue/24/outline";
-defineProps({
+import { useRouter } from "vue-router";
+const props = defineProps({
   task: { id: Number, title: String, completed: Boolean },
 });
 
 const emits = defineEmits(["editTask"]);
 
+const router = useRouter();
+
+const goToTaskDetail = (taskId) => {
+  router.push(`/task/${taskId}`);
+};
+
 const updateTask = () => {
-  emits("editTask", task);
+  emits("editTask", props.task);
 };
 </script>
 

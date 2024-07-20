@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="isVisible"
+    v-if="isModalOpen"
     @click="closeModalWhenClickOutside"
     class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75"
   >
@@ -9,7 +9,7 @@
         class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600"
       >
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-          Add New Task
+          {{ isEditMode ? "Edit Task" : "Add New Task" }}
         </h3>
         <button
           type="button"
@@ -55,7 +55,7 @@
             :disabled="taskTitleError ? true : false"
             :class="taskTitleError && 'cursor-not-allowed'"
           >
-            Add Task
+            {{ isEditMode ? "Update Task" : "Add Task" }}
           </button>
         </div>
       </form>
@@ -64,34 +64,41 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch, defineProps } from "vue";
 import { useToDoTaskStore } from "../store/ToDoTaskStore";
 import { v4 as uuid } from "uuid";
 
 const toDoTaskStore = useToDoTaskStore();
-const isVisible = ref(false);
+const props = defineProps({
+  task: Object,
+});
+const isModalOpen = ref(false);
 const taskTitle = ref("");
 const taskTitleError = ref("");
+const isEditMode = ref(false);
 
 const showModal = () => {
-  taskTitle.value = "";
   taskTitleError.value = "";
-  isVisible.value = true;
+  isModalOpen.value = true;
 };
 
 const closeModal = () => {
-  isVisible.value = false;
+  isModalOpen.value = false;
 };
 
 const handleSubmit = () => {
   if (taskTitle.value) {
-    const payload = {
-      id: uuid(),
-      title: taskTitle.value,
-      completed: false,
-    };
-    toDoTaskStore.addTask(payload);
-    isVisible.value = false;
+    if (isEditMode.value) {
+      toDoTaskStore.updateTask({ ...props.task, title: taskTitle.value });
+    } else {
+      const payload = {
+        id: uuid(),
+        title: taskTitle.value,
+        completed: false,
+      };
+      toDoTaskStore.addTask(payload);
+    }
+    isModalOpen.value = false;
     taskTitle.value = "";
   }
 };
@@ -106,9 +113,20 @@ const checkValidation = () => {
 
 const closeModalWhenClickOutside = (event) => {
   if (event.target === event.currentTarget) {
-    isVisible.value = false;
+    isModalOpen.value = false;
   }
 };
+
+// Prefill task data when user clicks on edit modal
+watch(isModalOpen, (newVal) => {
+  if (newVal && props.task) {
+    isEditMode.value = true;
+    taskTitle.value = props.task ? props.task.title : "";
+  } else {
+    isEditMode.value = false;
+    taskTitle.value = "";
+  }
+});
 
 defineExpose({
   showModal,
