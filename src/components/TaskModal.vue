@@ -13,7 +13,7 @@
         </h3>
         <button
           type="button"
-          class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+          class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8"
           @click="closeModal"
         >
           <span>X</span>
@@ -50,7 +50,7 @@
             Close
           </button>
           <button
-            class="px-3 py-1 bg-green-600 text-white rounded"
+            class="px-3 py-1 bg-green-600 text-white rounded disabled:bg-green-600/60"
             type="submit"
             :disabled="taskTitleError ? true : false"
             :class="taskTitleError && 'cursor-not-allowed'"
@@ -64,7 +64,7 @@
 </template>
 
 <script setup>
-import { ref, watch, defineProps } from "vue";
+import { ref, watch } from "vue";
 import { useToDoTaskStore } from "../store/ToDoTaskStore";
 import { v4 as uuid } from "uuid";
 

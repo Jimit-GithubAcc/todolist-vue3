@@ -23,10 +23,10 @@ export const useToDoTaskStore = defineStore("todo", {
     addTask(task) {
       this.tasks.push(task);
     },
-    updateTask(task) {
-      const index = this.tasks.findIndex((task) => task.id === task.id);
+    updateTask(newTask) {
+      const index = this.tasks.findIndex((task) => task.id === newTask.id);
       if (index !== -1) {
-        this.tasks[index] = task;
+        this.tasks[index] = newTask;
       }
     },
     searchTask(search) {
