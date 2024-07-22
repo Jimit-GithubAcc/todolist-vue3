@@ -50,10 +50,14 @@
     <h2>All Tasks - {{ countTotalTasks }}</h2>
     <article class="mt-5 flex gap-5 flex-col mx-auto max-w-4xl items-center">
       <tasks-list
-        v-for="task in sortTasksAsCompleted"
+        v-for="(task, idx) in sortTasksAsCompleted"
         :key="task.id"
         :task="task"
+        :idx="idx"
         @editTask="openEditTaskModal"
+        @dragstart="handleDragStart"
+        @dragover="handleDragEnd"
+        @drop="handleDrop"
       />
     </article>
   </section>
@@ -62,10 +66,14 @@
     <h2>Completed Tasks - {{ getCompletedTasks.length }}</h2>
     <article class="mt-5 flex gap-5 flex-col mx-auto max-w-4xl items-center">
       <tasks-list
-        v-for="task in getCompletedTasks"
+        v-for="(task, idx) in getCompletedTasks"
         :key="task.id"
         :task="task"
+        :idx="idx"
         @editTask="openEditTaskModal"
+        @dragstart="handleDragStart"
+        @dragover="handleDragEnd"
+        @drop="handleDrop"
       />
     </article>
   </section>
@@ -77,10 +85,14 @@
       v-if="taskStatus === 'pending'"
     >
       <tasks-list
-        v-for="task in getPendingTasks"
+        v-for="(task, idx) in getPendingTasks"
         :key="task.id"
         :task="task"
+        :idx="idx"
         @editTask="openEditTaskModal"
+        @dragstart="handleDragStart"
+        @dragover="handleDragEnd"
+        @drop="handleDrop"
       />
     </article>
   </section>
@@ -107,6 +119,7 @@ const taskStatus = ref("all");
 const taskModal = ref(null);
 const searchTask = ref("");
 const currentTask = ref(null);
+let draggedIndex = null;
 
 const openAddTaskModal = () => {
   currentTask.value = null;
@@ -128,6 +141,27 @@ const handleSaveTask = (task) => {
   } else {
     toDoTaskStore.addTask(task);
   }
+};
+
+const handleDragStart = (e, id) => {
+  draggedIndex = id;
+  e.dataTransfer.effectAllowed = "move";
+};
+
+const handleDragEnd = (e) => {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "move";
+};
+
+const handleDrop = (e, id) => {
+  e.preventDefault();
+  if (draggedIndex !== null && draggedIndex !== id) {
+    const newOrder = [...tasks.value];
+    const draggedItem = newOrder.splice(draggedIndex, 1)[0];
+    newOrder.splice(id, 0, draggedItem);
+    toDoTaskStore.dragAndDropTasks(newOrder);
+  }
+  draggedIndex = null;
 };
 </script>
 

@@ -2,6 +2,10 @@
   <section
     class="flex items-center justify-between gap-5 px-5 py-3 shadow-lg rounded-md w-full bg-white"
     :class="{ completed: task.completed }"
+    draggable="true"
+    @dragstart="handleDragStart"
+    @dragover="handleDragEnd"
+    @drop="handleDrop"
   >
     <h2 class="flex-1 cursor-pointer" @click="goToTaskDetail(task.id)">
       {{ task.title }}
@@ -27,9 +31,10 @@ import { PencilSquareIcon } from "@heroicons/vue/24/outline";
 import { useRouter } from "vue-router";
 const props = defineProps({
   task: { id: Number, title: String, completed: Boolean },
+  idx: Number,
 });
 
-const emits = defineEmits(["editTask"]);
+const emits = defineEmits(["editTask", "dragstart", "dragover", "drop"]);
 
 const router = useRouter();
 
@@ -39,6 +44,18 @@ const goToTaskDetail = (taskId) => {
 
 const updateTask = () => {
   emits("editTask", props.task);
+};
+
+const handleDragStart = (e, id) => {
+  emits("dragstart", e, props.idx);
+};
+
+const handleDragEnd = (e) => {
+  emits("dragover", e);
+};
+
+const handleDrop = (e, id) => {
+  emits("drop", e, props.idx);
 };
 </script>
 

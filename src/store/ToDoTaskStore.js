@@ -6,8 +6,11 @@ export const useToDoTaskStore = defineStore("todo", {
     tasks: initialTasks,
   }),
   getters: {
+    // sortTasksAsCompleted(state) {
+    //   return state.tasks.sort((a, b) => a.completed - b.completed);
+    // },
     sortTasksAsCompleted(state) {
-      return state.tasks.sort((a, b) => a.completed - b.completed);
+      return state.tasks;
     },
     getCompletedTasks(state) {
       return state.tasks.filter((task) => task.completed);
@@ -37,6 +40,9 @@ export const useToDoTaskStore = defineStore("todo", {
       } else {
         this.tasks = initialTasks;
       }
+    },
+    dragAndDropTasks(dragOrder) {
+      this.tasks = dragOrder;
     },
   },
 });
